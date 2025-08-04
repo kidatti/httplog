@@ -40,6 +40,12 @@ func createLogDir() (string, error) {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	// 時間、ホスト、パスを表示
+	fmt.Printf("[%s] Host: %s, Path: %s\n", 
+		time.Now().Format("2006-01-02 15:04:05"), 
+		r.Host, 
+		r.URL.Path)
+	
 	// CORS ヘッダーを設定
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -81,6 +87,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Get:    make(map[string]string),
 		Post:   make(map[string]string),
 		Data:   string(body),
+	}
+	
+	// Hostヘッダーを追加（Go言語ではr.Headerから削除されてr.Hostに移動される）
+	if r.Host != "" {
+		request.Header["Host"] = r.Host
 	}
 	
 	for name, values := range r.Header {
